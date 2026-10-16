@@ -14,7 +14,7 @@ DomainT = TypeVar("DomainT")
 def to_domain_model(domain_model: type[DomainT], db_obj: Base) -> DomainT:
     if not is_dataclass(domain_model):
         raise TypeError("domain_model must be python dataclass")
-    dict_schema: dict[str, any] = {}
+    dict_schema: dict[str, object] = {}
     for field in fields(domain_model):
         if not field.init:
             continue

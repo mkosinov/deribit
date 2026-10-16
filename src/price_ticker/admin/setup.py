@@ -1,12 +1,9 @@
-"""SQLAdmin model views and setup."""
-
 from typing import ClassVar
 
 from sqladmin import Admin, ModelView
-from sqlalchemy import Column, create_engine
+from sqlalchemy import Column
 
 from db import db_manager
-from db.base import Base
 from models.price_ticker import PriceTickerRow
 
 
@@ -37,12 +34,7 @@ ALL_ADMIN_VIEWS: ClassVar = [PriceTickerAdmin]
 
 
 def setup_admin(app) -> Admin:
-    sync_url = str(db_manager.engine.url).replace(
-        "sqlite+aiosqlite://", "sqlite://"
-    )
-    sync_engine = create_engine(sync_url)
-    Base.metadata.create_all(sync_engine)
-    admin = Admin(app, engine=sync_engine)
+    admin = Admin(app, engine=db_manager.engine)
     for view_cls in ALL_ADMIN_VIEWS:
         admin.add_view(view_cls)
     return admin

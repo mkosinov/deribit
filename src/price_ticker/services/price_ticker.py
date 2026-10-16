@@ -18,39 +18,44 @@ class PriceTickerService:
     ) -> None:
         self._repository = repository
 
-    async def prices_by_ticker(
+    async def list_prices(
+        self,
+        db_session: AsyncSession,
+        ticker: str,
+    ) -> list[PriceTickerDomain]:
+        """All records by the ticker."""
+        return await self._repository.list_all(
+            session=db_session, ticker=ticker
+        )
+
+    async def list_prices_page(
         self,
         db_session: AsyncSession,
         ticker: str,
         pagination: Pagination,
         period: Period | None,
     ) -> Page[PriceTickerDomain]:
-        """Return all records by the ticker."""
-        result = await self._repository.list(
-            db_session,
+        """One page of records by the ticker and optional period."""
+        return await self._repository.list_page(
+            session=db_session,
             pagination=pagination,
             ticker=ticker,
             period=period,
         )
-        return result
 
     async def get_last_price(
         self, db_session: AsyncSession, ticker: str
     ) -> PriceTickerDomain | None:
         """Returns last price ticker, or ``None`` if not found."""
-        result = await self._repository.get_last_price_by_ticker(
+        return await self._repository.get_last_price_by_ticker(
             db_session, ticker
         )
-        if result is None:
-            return None
-        return result
 
-    # async def create(
-    #     self, db_session: AsyncSession, data: CreateSchemaT
-    # ) -> ResponseSchemaT:
-    #     """Create a new record from a validated create schema."""
-    #     orm = await self._repository.create(db_session, data, self._model)
-    #     return self._response_schema.model_validate(orm)
+    async def create(
+        self, db_session: AsyncSession, prices: list[PriceTickerDomain]
+    ) -> int:
+        """Save a list of PriceTicker records; returns the number of records inserted."""
+        return await self._repository.save_many(db_session, prices)
 
 
 def get_price_ticker_service() -> PriceTickerService:

@@ -1,5 +1,6 @@
 from collections.abc import AsyncIterator
 
+from sqlalchemy.engine import URL
 from sqlalchemy.ext.asyncio import (
     AsyncSession,
     async_sessionmaker,
@@ -8,9 +9,7 @@ from sqlalchemy.ext.asyncio import (
 
 
 class DBManager:
-    """Manages the async engine and provides a FastAPI-compatible session dependency."""
-
-    def __init__(self, db_url: str, echo_mode: bool = False) -> None:
+    def __init__(self, db_url: str | URL, echo_mode: bool = False) -> None:
         self.engine = create_async_engine(db_url, echo=echo_mode, future=True)
         self.async_session = async_sessionmaker(
             self.engine,

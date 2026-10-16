@@ -1,20 +1,34 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from sqlalchemy.engine import URL
 
 
 class Settings(BaseSettings):
-    """Runtime configuration sourced from environment variables."""
-
     model_config = SettingsConfigDict(
-        env_file=".env", env_file_encoding="utf-8"
+        env_file=".env",
+        env_file_encoding="utf-8",
+        extra="ignore",
     )
 
-    DATABASE_URL: str = "sqlite+aiosqlite:///./app.db"
+    DATABASE_HOST: str = "localhost"
+    DATABASE_PORT: int = 5432
+    DATABASE_NAME: str = "price_tracker"
+    DATABASE_USER: str = "price_tracker"
+    DATABASE_PASSWORD: str = "price_tracker"
     PROJECT_NAME: str = "Deribit client"
-    CORS_ORIGINS: list[str] = [
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-    ]
     LOG_LEVEL: str = "INFO"
+    TRACKED_TICKERS: list[str] = ["BTC_USD", "ETH_USD"]
+    REDIS_URL: str = "redis://localhost:6379/0"
+
+    @property
+    def database_connection_url(self) -> URL:
+        return URL.create(
+            drivername="postgresql+psycopg",
+            username=self.DATABASE_USER,
+            password=self.DATABASE_PASSWORD,
+            host=self.DATABASE_HOST,
+            port=self.DATABASE_PORT,
+            database=self.DATABASE_NAME,
+        )
 
 
 settings = Settings()

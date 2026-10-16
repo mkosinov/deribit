@@ -1,5 +1,5 @@
 from fastapi import Query
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 from application.pagination import Pagination
 
@@ -13,6 +13,8 @@ class PaginationQuery(BaseModel):
 
 
 class PaginatedEnvelope(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     limit: int
     offset: int
     total: int

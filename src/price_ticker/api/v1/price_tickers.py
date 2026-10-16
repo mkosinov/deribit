@@ -18,9 +18,9 @@ router = APIRouter(tags=["Deribit prices"])
 
 
 @router.get(
-    "/all",
-    response_model=PriceTickersPaginatedResponse,
-    summary="List prices by ticker",
+    "/prices/all",
+    response_model=list[PriceTickerResponse],
+    summary="All prices by ticker",
 )
 async def list_prices(
     ticker: Annotated[
@@ -28,23 +28,20 @@ async def list_prices(
         Query(
             min_length=3,
             max_length=48,
-            pattern=r"^[A-Z0-9_-]+$",
+            pattern=r"^[a-zA-Z0-9_-]+$",
             openapi_examples={"BTC_USD": {"value": "BTC_USD"}},
         ),
     ],
-    pagination_query: Annotated[PaginationQuery, Depends()],
     service: Annotated[PriceTickerService, Depends(get_price_ticker_service)],
     db_session: SessionDep,
-) -> PriceTickersPaginatedResponse:
-    return await service.prices_by_ticker(
-        db_session=db_session,
-        ticker=ticker.upper(),
-        pagination=pagination_query.to_domain(),
+) -> list[PriceTickerResponse]:
+    return await service.list_prices(
+        db_session=db_session, ticker=ticker.upper()
     )
 
 
 @router.get(
-    "/latest",
+    "/prices/latest",
     response_model=PriceTickerResponse,
     summary="Get the latest price by ticker",
 )
@@ -54,7 +51,7 @@ async def get_latest_price(
         Query(
             min_length=3,
             max_length=48,
-            pattern=r"^[A-Z0-9_-]+$",
+            pattern=r"^[a-zA-Z0-9_-]+$",
             openapi_examples={"BTC_USD": {"value": "BTC_USD"}},
         ),
     ],
@@ -73,7 +70,7 @@ async def get_latest_price(
 
 
 @router.get(
-    "/by_date",
+    "/prices/period",
     response_model=PriceTickersPaginatedResponse,
     summary="List prices by ticker for the specified period",
 )
@@ -83,7 +80,7 @@ async def list_prices_by_period(
         Query(
             min_length=3,
             max_length=48,
-            pattern=r"^[A-Z0-9_-]+$",
+            pattern=r"^[a-zA-Z0-9_-]+$",
             openapi_examples={"BTC_USD": {"value": "BTC_USD"}},
         ),
     ],
@@ -92,7 +89,7 @@ async def list_prices_by_period(
     service: Annotated[PriceTickerService, Depends(get_price_ticker_service)],
     db_session: SessionDep,
 ) -> PriceTickersPaginatedResponse:
-    return await service.prices_by_ticker(
+    return await service.list_prices_page(
         db_session=db_session,
         ticker=ticker.upper(),
         pagination=pagination_query.to_domain(),

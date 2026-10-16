@@ -1,0 +1,47 @@
+services:
+  app:
+    build: .
+    command:
+      [
+        "uvicorn",
+        "main:app",
+        "--host",
+        "0.0.0.0",
+        "--port",
+        "${APP_CONTAINER_PORT}",
+      ]
+    environment:
+      DATABASE_HOST: db
+      DATABASE_NAME: ${POSTGRES_DB}
+      DATABASE_USER: ${POSTGRES_USER}
+      DATABASE_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "${APP_HOST_PORT}:${APP_CONTAINER_PORT}"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - deribit
+
+  db:
+    image: postgres:18.6-alpine3.24
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - deribit
+
+volumes:
+  postgres_data:
+
+networks:
+  deribit:
+    driver: bridge
