@@ -1,0 +1,19 @@
+[project]
+name = "deribit-price-tracker"
+version = "0.1.0"
+description = "Test task"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "aiosqlite>=0.22.1",
+    "fastapi>=0.143.1",
+    "pydantic>=2.14.1",
+    "pydantic-settings>=2.16.0",
+    "pytest>=9.1.1",
+    "sqladmin>=0.32.0",
+    "sqlalchemy[asyncio]>=2.1.4",
+    "uvicorn>=0.54.0",
+]
+
+[tool.ruff]
+src = ["src/price_ticker"]
