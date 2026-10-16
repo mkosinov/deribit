@@ -1,22 +1,13 @@
 from datetime import UTC, date, datetime, time, timedelta
 
-from fastapi import Query
 from pydantic import BaseModel
 
 from application.period import Period
 
 
 class PeriodQuery(BaseModel):
-    start_date: date | None = Query(
-        default=None,
-        description="Начальная дата периода, формат YYYY-MM-DD",
-        openapi_examples={"utc_date": {"value": "2026-10-15"}},
-    )
-    end_date: date | None = Query(
-        default=None,
-        description="Конечная дата периода включительно, формат YYYY-MM-DD",
-        openapi_examples={"utc_date": {"value": "2026-10-16"}},
-    )
+    start_date: date | None = None
+    end_date: date | None = None
 
     @staticmethod
     def _start_of_day_timestamp(value: date | None) -> int | None:

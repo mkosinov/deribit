@@ -13,7 +13,7 @@ class PriceTickerRow(Base):
         PrimaryKeyConstraint(
             "ticker", "timestamp", name="pk_ticker_timestamp"
         ),
-        CheckConstraint("ticker = UPPER(ticker)", name="ck_ticker_uppercase"),
+        CheckConstraint("ticker = LOWER(ticker)", name="ck_ticker_lowercase"),
         CheckConstraint("ticker NOT LIKE '% %'", name="ck_ticker_no_spaces"),
     )
 

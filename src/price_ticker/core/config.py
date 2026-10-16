@@ -11,12 +11,12 @@ class Settings(BaseSettings):
 
     DATABASE_HOST: str = "localhost"
     DATABASE_PORT: int = 5432
-    DATABASE_NAME: str = "price_tracker"
-    DATABASE_USER: str = "price_tracker"
-    DATABASE_PASSWORD: str = "price_tracker"
+    DATABASE_NAME: str = "price_ticker"
+    DATABASE_USER: str = "price_ticker"
+    DATABASE_PASSWORD: str = "price_ticker"
     PROJECT_NAME: str = "Deribit client"
     LOG_LEVEL: str = "INFO"
-    TRACKED_TICKERS: list[str] = ["BTC_USD", "ETH_USD"]
+    TRACKED_TICKERS: list[str] = ["btc_usd", "eth_usd"]
     REDIS_URL: str = "redis://localhost:6379/0"
 
     @property

@@ -1,4 +1,5 @@
 from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
 
 from sqlalchemy.engine import URL
 from sqlalchemy.ext.asyncio import (
@@ -16,8 +17,9 @@ class DBManager:
             expire_on_commit=False,
         )
 
-    async def get_db_session(self) -> AsyncIterator[AsyncSession]:
-        """FastAPI dependency: yields a transactional session, commits on success, rolls back on error."""
+    @asynccontextmanager
+    async def session(self) -> AsyncIterator[AsyncSession]:
+        """Transactional session: commits on success, rolls back on error."""
         async with self.async_session() as session:
             try:
                 yield session
@@ -25,3 +27,8 @@ class DBManager:
             except Exception:
                 await session.rollback()
                 raise
+
+    async def get_db_session(self) -> AsyncIterator[AsyncSession]:
+        """FastAPI dependency: yields a transactional session, commits on success, rolls back on error."""
+        async with self.session() as session:
+            yield session

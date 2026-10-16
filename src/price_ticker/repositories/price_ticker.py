@@ -27,7 +27,7 @@ class PriceTickerRepo:
 
         row = await session.execute(
             select(self.db_model)
-            .where(func.upper(self.db_model.ticker) == func.upper(ticker))
+            .where(func.lower(self.db_model.ticker) == func.lower(ticker))
             .order_by(self.db_model.timestamp.desc())
             .limit(1)
         )
@@ -78,7 +78,7 @@ class PriceTickerRepo:
 
     def _list_statement(self, ticker: str, period: Period | None):
         stmt = select(self.db_model).where(
-            func.upper(self.db_model.ticker) == func.upper(ticker)
+            func.lower(self.db_model.ticker) == func.lower(ticker)
         )
         if period and period.start is not None:
             stmt = stmt.where(self.db_model.timestamp >= period.start)

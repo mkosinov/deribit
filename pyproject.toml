@@ -1,5 +1,5 @@
 [project]
-name = "deribit-price-tracker"
+name = "deribit-price_ticker"
 version = "0.1.0"
 description = "Test task"
 readme = "README.md"
